@@ -1,7 +1,8 @@
 CC=$(CROSS_COMPILE)gcc
 
-CFLAGS+=-Wall -std=gnu99 -fPIC -D_GNU_SOURCE
-LDFLAGS+=-liio
+CFLAGS += -Wall -std=gnu99 -fPIC -D_GNU_SOURCE
+LDFLAGS += -liio
+INCLUDE += -Iinclude/
 
 # VERSION
 MAJOR=0
@@ -18,14 +19,17 @@ all : icm20608d
 debug: CFLAGS += -O0 -DDEBUG -g -Wno-unused-variable
 debug: all
 
-icm20608d: icm20608d.o loop.o init.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+icm20608d: icm20608d.o libiio-loop.o local-loop.o
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 icm20608d.o: icm20608d.c
-	$(CC) $(CFLAGS) -c $^ $(VERSION)
+	$(CC) $(CFLAGS) -c $^ $(VERSION) $(INCLUDE)
 
-loop.o: loop.c
-	$(CC) $(CFLAGS) -c $^
+libiio-loop.o: src/libiio-loop.c
+	$(CC) $(CFLAGS) -c $^ $(INCLUDE)
 
-init.o: init.c
-	$(CC) $(CFLAGS) -c $^
+local-loop.o: src/local-loop.c
+	$(CC) $(CFLAGS) -c $^ $(INCLUDE)
+
+clean::
+	-rm icm20608d *.o

@@ -1,19 +1,20 @@
+# IMU icm20608 working example both with libiio and without
+
+## local board
+
 ```
-(cd /sys/bus/iio/devices/iio:device0/scan_elements/ && for file in *_en; do echo 1 > $file; done)
-echo 500 > /sys/bus/iio/devices/iio:device0/sampling_frequency
-strace iio_readdev -b 256 -a -s 0 icm20608 &> /dev/null &
+# ./icm20608d icm20608
 ```
 
-# local board
+## remote host
 
+on board:
 ```
 # iiod
 ```
 
-# remote host
+on host:
+```
+$ ./icm20608 -u ip:<IP> icm20608
+```
 
-```
-# ./iio_info -n [host_address]
-# iio_attr -u ip:[host_address] -d
-# ./iio_readdev -u ip:[host_address] -b 256 -s 0 icm20608
-```
